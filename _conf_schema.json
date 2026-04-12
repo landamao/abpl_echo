@@ -1,0 +1,37 @@
+{
+  "复读机": {
+    "description": "检测到一条消息发送两次后复读",
+    "type": "bool",
+    "default": true
+  },
+  "发送": {
+    "description": "仅管理员可以使用发送指定文本",
+    "type": "bool",
+    "default": true
+  },
+  "复读": {
+    "description": "仅管理员可以使用复读引用消息",
+    "type": "bool",
+    "default": true
+  },
+  "撤回": {
+    "description": "仅管理员可以使用撤回引用消息",
+    "type": "bool",
+    "default": true
+  },
+  "自动撤回": {
+    "description": "是否自动撤回此插件发送的消息",
+    "type": "bool",
+    "default": true
+  },
+  "延迟时间": {
+    "description": "发送消息后多少秒后撤回",
+    "type": "float",
+    "slider": {
+      "min": 0,
+      "max": 100,
+      "step": 0.1
+    },
+    "default": 20
+  }
+}

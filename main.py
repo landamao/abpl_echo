@@ -16,6 +16,7 @@ class 复读器(Star):
         # 新增复读模式配置
         s.repeat_mode = config.get("复读模式", "自定义内容")  # 跟着复读/自定义内容
         s.break_text = config.get("打断内容", "打断施法")  # 自定义打断内容
+        s.repeat_threshold = config.get("复读阈值", 2)  # 多少条相同消息才触发
 
         # 新增配置
         s.auto_recall = config.自动撤回   # 是否启用自动撤回
@@ -130,25 +131,29 @@ class 复读器(Star):
                         break
 
         if s.d and event.get_group_id():
+            gid = event.get_group_id()
             if not (len(消息链) == 1 and isinstance(消息链[0], Plain)):
-                s.群消息.pop(event.get_group_id(), None)
+                s.群消息.pop(gid, None)
                 return
-            if event.get_group_id() in s.群消息:
-                群消息 = s.群消息[event.get_group_id()]
-                if event.get_message_str() == 群消息['text']:
-                    if 群消息['zt'] and event.get_sender_id() != 群消息['usid']:
-                        群消息['zt'] = False
-                        # 根据配置选择复读或发送自定义内容
+            纯文本 = event.get_message_str()
+            uid = event.get_sender_id()
+            if gid in s.群消息:
+                info = s.群消息[gid]
+                if 纯文本 == info['text']:
+                    if info['triggered'] or uid == info['last_uid']:
+                        return  # 已触发过或同一个人，不再处理
+                    info['count'] += 1
+                    info['last_uid'] = uid
+                    if info['count'] >= s.repeat_threshold:
+                        info['triggered'] = True
                         if s.repeat_mode == "跟着复读":
-                            yield event.plain_result(event.get_message_str())
+                            yield event.plain_result(纯文本)
                         else:
                             yield event.plain_result(s.break_text)
                 else:
-                    群消息 = {'text': event.get_message_str(), 'usid': event.get_sender_id(),'zt': True}
-                    s.群消息[event.get_group_id()] = 群消息
+                    s.群消息[gid] = {'text': 纯文本, 'count': 1, 'last_uid': uid, 'triggered': False}
             else:
-                群消息 = {'text': event.get_message_str(), 'usid': event.get_sender_id(),'zt': True}
-                s.群消息[event.get_group_id()] = 群消息
+                s.群消息[gid] = {'text': 纯文本, 'count': 1, 'last_uid': uid, 'triggered': False}
 
     async def terminate(s):
         """当插件被禁用、重载插件时会调用这个方法"""

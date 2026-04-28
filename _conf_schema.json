@@ -4,6 +4,12 @@
     "type": "bool",
     "default": true
   },
+  "复读阈值": {
+    "description": "多少条相同消息才触发复读/打断",
+    "type": "int",
+    "default": 2,
+    "hint": "建议2-10，设为3则需要3条相同消息才触发"
+  },
   "复读模式": {
     "description": "检测到重复消息时的处理方式",
     "type": "string",

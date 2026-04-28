@@ -4,6 +4,17 @@
     "type": "bool",
     "default": true
   },
+  "复读模式": {
+    "description": "检测到重复消息时的处理方式",
+    "type": "string",
+    "options": ["跟着复读", "自定义内容"],
+    "default": "自定义内容"
+  },
+  "打断内容": {
+    "description": "复读模式为「自定义内容」时发送的文字",
+    "type": "string",
+    "default": "打断施法"
+  },
   "发送": {
     "description": "仅管理员可以使用发送指定文本",
     "type": "bool",

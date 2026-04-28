@@ -13,6 +13,10 @@ class 复读器(Star):
         s.d = config.复读机
         s.群消息 = {}
 
+        # 新增复读模式配置
+        s.repeat_mode = config.get("复读模式", "自定义内容")  # 跟着复读/自定义内容
+        s.break_text = config.get("打断内容", "打断施法")  # 自定义打断内容
+
         # 新增配置
         s.auto_recall = config.自动撤回   # 是否启用自动撤回
         s.recall_time = config.延迟时间   # 撤回延迟秒数
@@ -126,7 +130,7 @@ class 复读器(Star):
                         break
 
         if s.d and event.get_group_id():
-            if not isinstance(消息链[0], Plain):
+            if not (len(消息链) == 1 and isinstance(消息链[0], Plain)):
                 s.群消息.pop(event.get_group_id(), None)
                 return
             if event.get_group_id() in s.群消息:
@@ -134,7 +138,11 @@ class 复读器(Star):
                 if event.get_message_str() == 群消息['text']:
                     if 群消息['zt'] and event.get_sender_id() != 群消息['usid']:
                         群消息['zt'] = False
-                        yield event.plain_result(event.get_message_str())
+                        # 根据配置选择复读或发送自定义内容
+                        if s.repeat_mode == "跟着复读":
+                            yield event.plain_result(event.get_message_str())
+                        else:
+                            yield event.plain_result(s.break_text)
                 else:
                     群消息 = {'text': event.get_message_str(), 'usid': event.get_sender_id(),'zt': True}
                     s.群消息[event.get_group_id()] = 群消息

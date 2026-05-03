@@ -1,54 +1,94 @@
 {
-  "复读机": {
-    "description": "检测到一条消息发送两次后复读",
-    "type": "bool",
-    "default": true
+  "复读设置": {
+    "description": "复读检测与自动回复设置",
+    "type": "object",
+    "hint": "配置复读触发条件及响应方式",
+    "items": {
+      "复读机": {
+        "type": "bool",
+        "description": "开启自动复读功能",
+        "default": true,
+        "hint": "开启复读检测功能，当某条消息连续几次被复读时"
+      },
+      "复读阈值": {
+        "type": "int",
+        "description": "多少条相同消息才触发复读/打断",
+        "default": 2,
+        "hint": "建议2-10，设为3则需要3条相同消息才触发",
+        "slider": {
+            "min": 2,
+            "max": 6,
+            "step": 1
+        },
+        "condition": {
+          "复读机": true
+        }
+      },
+      "复读模式": {
+        "type": "string",
+        "description": "检测到重复消息时的处理方式",
+        "options": ["跟着复读", "自定义内容"],
+        "default": "跟着复读",
+        "condition": {
+          "复读机": true
+        }
+      },
+      "打断内容": {
+        "type": "string",
+        "description": "复读模式为「自定义内容」时发送的文字",
+        "default": "打断施法",
+        "condition": {
+          "复读模式": "自定义内容",
+          "复读机": true
+        }
+      }
+    }
   },
-  "复读阈值": {
-    "description": "多少条相同消息才触发复读/打断",
-    "type": "int",
-    "default": 2,
-    "hint": "建议2-10，设为3则需要3条相同消息才触发"
+  "指令设置": {
+    "description": "管理员专用指令开关",
+    "type": "object",
+    "hint": "控制仅管理员可使用的发送、复读、撤回指令",
+    "items": {
+      "发送": {
+        "type": "bool",
+        "description": "仅管理员可以使用发送指定文本",
+        "default": true
+      },
+      "复读": {
+        "type": "bool",
+        "description": "仅管理员可以使用复读引用消息",
+        "default": true
+      },
+      "撤回": {
+        "type": "bool",
+        "description": "仅管理员可以使用撤回引用消息",
+        "default": true
+      }
+    }
   },
-  "复读模式": {
-    "description": "检测到重复消息时的处理方式",
-    "type": "string",
-    "options": ["跟着复读", "自定义内容"],
-    "default": "自定义内容"
-  },
-  "打断内容": {
-    "description": "复读模式为「自定义内容」时发送的文字",
-    "type": "string",
-    "default": "打断施法"
-  },
-  "发送": {
-    "description": "仅管理员可以使用发送指定文本",
-    "type": "bool",
-    "default": true
-  },
-  "复读": {
-    "description": "仅管理员可以使用复读引用消息",
-    "type": "bool",
-    "default": true
-  },
-  "撤回": {
-    "description": "仅管理员可以使用撤回引用消息",
-    "type": "bool",
-    "default": true
-  },
-  "自动撤回": {
-    "description": "是否自动撤回此插件发送的消息",
-    "type": "bool",
-    "default": true
-  },
-  "延迟时间": {
-    "description": "发送消息后多少秒后撤回",
-    "type": "float",
-    "slider": {
-      "min": 0,
-      "max": 100,
-      "step": 0.1
-    },
-    "default": 20
+  "自动撤回设置": {
+    "description": "插件消息自动撤回",
+    "type": "object",
+    "hint": "控制是否自动撤回及撤回延迟时间",
+    "items": {
+      "自动撤回": {
+        "type": "bool",
+        "description": "是否自动撤回此插件发送的消息",
+        "default": true
+      },
+      "延迟时间": {
+        "type": "float",
+        "description": "发送消息后多少秒后撤回",
+        "slider": {
+          "min": 0,
+          "max": 100,
+          "step": 0.1
+        },
+        "default": 20,
+        "condition": {
+          "自动撤回": true
+        }
+      }
+    }
   }
 }

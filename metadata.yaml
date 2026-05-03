@@ -1,5 +1,5 @@
 name: 复读器
 desc:  发送/复读指定内容，撤回引用消息
-version: v4.0
+version: v4.1
 author: 懒大猫
 repo: https://github.com/landamao/abpl_echo
